@@ -25,18 +25,23 @@ namespace Calculator
             return regex.Matches(line).Any();
         }
 
-        private static bool IsAllBracketsClosed(string line)
+        private static bool IsAllBracketsClosedIfTrueReturnCountBrackets(string line, out int countBrackets)
         {
             int unclosedBrackets = 0;
+            int count = 0;
 
             foreach (char c in line)
             {
                 if (c == '(')
+                {
                     unclosedBrackets++;
+                    count++;
+                }
+                    
                 if (c == ')')
                     unclosedBrackets--;
             }
-
+            countBrackets = count;
             return unclosedBrackets == 0;
         }
 
@@ -135,7 +140,6 @@ namespace Calculator
             throw new InvalidOperationException();
         }
 
-
         public static double CalculateTwoNumbers(string input)
         {
             string pattern = @"([-+\/*])|([^-+\/*]*)";
@@ -210,15 +214,35 @@ namespace Calculator
 
             if (IsAnInvalidCharacter(input))
                 throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ), \\n, \\t, \\r \"");
-            if (!IsAllBracketsClosed(input))
+            if (!IsAllBracketsClosedIfTrueReturnCountBrackets(input, out int numberBrackets))
                 throw new ArithmeticException("Not all brackets are closed");
 
-            while (double.TryParse(input, out _) == true)
+            while (true)
             {
+                var countBrackets = 0;
+                if (numberBrackets == 0)
+                    return double.Parse(CalculateExpression(input));
+                for (int i = 0; i < input.Length; i++) 
+                {
+                    if (input[i] == '(')
+                        countBrackets++;
 
+                    if (input[i] == '(' && countBrackets == numberBrackets)
+                    {
+                        StringBuilder expression = new();
+                        for (int j = i+1; input[j] != ')'; j++)
+                        {
+                            expression.Append(input[j]);
+                        }
+                        string expressionResult = CalculateExpression(expression.ToString());
+                        expression.Insert(0, "(");
+                        expression.Append(")");
 
+                        input = input.Replace(expression.ToString(), expressionResult);
+                        return Calculate(input);
+                    }
+                }
             }
-            return double.Parse(input);
         }
     }
 }
