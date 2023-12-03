@@ -1,10 +1,17 @@
 ﻿namespace Calculator
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(LineCalculator.Calculate("100 * (456*75+33-(322-22--77+(3+3)*34))"));
+            if (args.Length != 0)
+            { 
+
+            }
+
+            Console.Write("Enter the expression -> ");
+            var input = Console.ReadLine();
+            Console.WriteLine($"{input} -> {ExpressionCalculator.Calculate(input)}");
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Calculator
 {
-    public class LineCalculator
+    public class ExpressionCalculator
     {
         private static List<string> RemoveEmptyStrings(string[] strings)
         {
@@ -20,14 +20,14 @@ namespace Calculator
 
         private static bool IsAnInvalidCharacter(string line)
         {
-            string pattern = @"[^0-9-+*\/()\n\t\r]";
+            var pattern = @"[^0-9-+*\/(),.]";
             Regex regex = new(pattern);
             return regex.Matches(line).Any();
         }
 
-        private static bool IsAllBracketsClosedIfTrueReturnCountBrackets(string line, out int countBrackets)
+        private static bool IsAllBracketsClosedOutCountBrackets(string line, out int countBrackets)
         {
-            int unclosedBrackets = 0;
+            var unclosedBrackets = 0;
             int count = 0;
 
             foreach (char c in line)
@@ -37,7 +37,7 @@ namespace Calculator
                     unclosedBrackets++;
                     count++;
                 }
-                    
+
                 if (c == ')')
                     unclosedBrackets--;
             }
@@ -45,9 +45,9 @@ namespace Calculator
             return unclosedBrackets == 0;
         }
 
-        private static string FindCalculateOperation(string input)
+        private static string FindOperation(string input)
         {
-            string pattern = @"([-+\/*])|([^-+\/*]*)";
+            var pattern = @"([-+\/*])|([^-+\/*]*)";
             Regex regex = new(pattern);
             List<string> elements = RemoveEmptyStrings(regex.Split(input));
 
@@ -140,9 +140,9 @@ namespace Calculator
             throw new InvalidOperationException();
         }
 
-        public static double CalculateTwoNumbers(string input)
+        private static double CalculateTwoNumbers(string input)
         {
-            string pattern = @"([-+\/*])|([^-+\/*]*)";
+            var pattern = @"([-+\/*])|([^-+\/*]*)";
             Regex regex = new(pattern);
 
             List<string> elements = RemoveEmptyStrings(regex.Split(input));
@@ -150,19 +150,19 @@ namespace Calculator
             // need to simplify the code
             if (elements.Count == 4 && elements[0] == "-")
             {
-                elements[0] = elements[0] + elements[1];
+                elements[0] += elements[1];
                 elements[1] = elements[2];
                 elements[2] = elements[3];
             }
 
             if (elements.Count == 4 && elements[2] == "-")
             {
-                elements[2] = elements[2] + elements[3];
+                elements[2] += elements[3];
             }
 
             if (elements.Count == 5)
             {
-                elements[0] = elements[0] + elements[1];
+                elements[0] += elements[1];
                 elements[1] = elements[2];
                 elements[2] = elements[3] + elements[4];
             }
@@ -188,20 +188,20 @@ namespace Calculator
                 case "*":
                     return elmFirst * elmSecond;
                 default:
-                    throw new ArgumentException();
+                    throw new Exception();
             }
         }
 
-        public static string CalculateExpression(string input)
+        private static string CalculateExpression(string input)
         {
             string pattern = @"([-+\/*])|([^-+\/*]*)";
             Regex regex = new(pattern);
             List<string> elements = RemoveEmptyStrings(regex.Split(input));
 
-            if (elements.Count < 3)
+            if (elements.Count <= 2)
                 return input;
 
-            string needToChange = FindCalculateOperation(input);
+            string needToChange = FindOperation(input);
             double res = CalculateTwoNumbers(needToChange);
             input = input.Replace(needToChange, res.ToString());
 
@@ -210,19 +210,21 @@ namespace Calculator
 
         public static double Calculate(string input)
         {
-            input = String.Join("", input.Split(' ')); // Remove spaces
+            input = String.Join("", input.Split(' '));
 
             if (IsAnInvalidCharacter(input))
-                throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ), \\n, \\t, \\r \"");
-            if (!IsAllBracketsClosedIfTrueReturnCountBrackets(input, out int numberBrackets))
+                throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ),'.',','\"");
+            if (!IsAllBracketsClosedOutCountBrackets(input, out int numberBrackets))
                 throw new ArithmeticException("Not all brackets are closed");
 
             while (true)
             {
                 var countBrackets = 0;
+
                 if (numberBrackets == 0)
                     return double.Parse(CalculateExpression(input));
-                for (int i = 0; i < input.Length; i++) 
+
+                for (int i = 0; i < input.Length; i++)
                 {
                     if (input[i] == '(')
                         countBrackets++;
@@ -230,13 +232,13 @@ namespace Calculator
                     if (input[i] == '(' && countBrackets == numberBrackets)
                     {
                         StringBuilder expression = new();
-                        for (int j = i+1; input[j] != ')'; j++)
+                        for (int j = i + 1; input[j] != ')'; j++)
                         {
                             expression.Append(input[j]);
                         }
                         string expressionResult = CalculateExpression(expression.ToString());
-                        expression.Insert(0, "(");
-                        expression.Append(")");
+                        expression.Insert(0, '(');
+                        expression.Append(')');
 
                         input = input.Replace(expression.ToString(), expressionResult);
                         return Calculate(input);
