@@ -1,7 +1,7 @@
 namespace Calculator.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class CalculatorTests
     {
         [TestMethod]
         public void TestMethod1()

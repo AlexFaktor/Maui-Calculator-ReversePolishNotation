@@ -208,42 +208,61 @@ namespace Calculator
             return CalculateExpression(input);
         }
 
-        public static double Calculate(string input)
+        public static string Calculate(string input)
         {
-            input = String.Join("", input.Split(' '));
-
-            if (IsAnInvalidCharacter(input))
-                throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ),'.',','\"");
-            if (!IsAllBracketsClosedOutCountBrackets(input, out int numberBrackets))
-                throw new ArithmeticException("Not all brackets are closed");
-
-            while (true)
+            try
             {
-                var countBrackets = 0;
+                input = String.Join("", input.Split(' '));
 
-                if (numberBrackets == 0)
-                    return double.Parse(CalculateExpression(input));
+                if (IsAnInvalidCharacter(input))
+                    throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ),'.',','\"");
+                if (!IsAllBracketsClosedOutCountBrackets(input, out int numberBrackets))
+                    throw new ArithmeticException("Not all brackets are closed");
 
-                for (int i = 0; i < input.Length; i++)
+                while (true)
                 {
-                    if (input[i] == '(')
-                        countBrackets++;
+                    var countBrackets = 0;
 
-                    if (input[i] == '(' && countBrackets == numberBrackets)
+                    if (numberBrackets == 0)
+                        return CalculateExpression(input);
+
+                    for (int i = 0; i < input.Length; i++)
                     {
-                        StringBuilder expression = new();
-                        for (int j = i + 1; input[j] != ')'; j++)
-                        {
-                            expression.Append(input[j]);
-                        }
-                        string expressionResult = CalculateExpression(expression.ToString());
-                        expression.Insert(0, '(');
-                        expression.Append(')');
+                        if (input[i] == '(')
+                            countBrackets++;
 
-                        input = input.Replace(expression.ToString(), expressionResult);
-                        return Calculate(input);
+                        if (input[i] == '(' && countBrackets == numberBrackets)
+                        {
+                            StringBuilder expression = new();
+                            for (int j = i + 1; input[j] != ')'; j++)
+                            {
+                                expression.Append(input[j]);
+                            }
+                            string expressionResult = CalculateExpression(expression.ToString());
+                            expression.Insert(0, '(');
+                            expression.Append(')');
+
+                            input = input.Replace(expression.ToString(), expressionResult);
+                            return Calculate(input);
+                        }
                     }
                 }
+            }
+            catch (ArgumentException)
+            {
+                return "Incorrect input format";
+            }
+            catch (DivideByZeroException)
+            {
+                return "Not divisible by 0";
+            }
+            catch (ArithmeticException)
+            {
+                return "Not all brackets are closed";
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
             }
         }
     }
