@@ -4,6 +4,9 @@ namespace Calculator
 {
     public class ExpressionCalculatorTools
     {
+        /// <summary>
+        /// Gets a list of expressions, returns a list of solved expressions
+        /// </summary>
         public static string CalculateList(string[] expressions)
         {
             StringBuilder output = new();

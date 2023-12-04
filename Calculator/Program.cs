@@ -16,7 +16,7 @@
 
             Console.Write("Enter the expression -> ");
             var input = Console.ReadLine();
-            Console.WriteLine($"{input} -> {ExpressionCalculator.Calculate(input)}");
+            Console.WriteLine($"{input} -> {ExpressionCalculator.Calculate(input!)}");
 
             return 0;
         }
