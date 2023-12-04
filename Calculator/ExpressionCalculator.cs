@@ -6,6 +6,9 @@ namespace Calculator
 {
     public class ExpressionCalculator
     {
+        /// <summary>
+        /// removes empty lines after Regax
+        /// </summary>
         private static List<string> RemoveEmptyStrings(string[] strings)
         {
             List<string> cleanStrings = new();
@@ -18,6 +21,10 @@ namespace Calculator
             return cleanStrings;
         }
 
+        /// <summary>
+        /// Checks for available characters
+        /// </summary>
+
         private static bool IsAnInvalidCharacter(string line)
         {
             var pattern = @"[^0-9-+*\/(),.]";
@@ -25,6 +32,9 @@ namespace Calculator
             return regex.Matches(line).Any();
         }
 
+        /// <summary>
+        /// Returns a bool value, depending on whether the brackets are in the correct order, and also returns their number in out
+        /// </summary>
         private static bool IsAllBracketsClosedOutCountBrackets(string line, out int countBrackets)
         {
             var unclosedBrackets = 0;
@@ -45,6 +55,9 @@ namespace Calculator
             return unclosedBrackets == 0;
         }
 
+        /// <summary>
+        /// Finds and returns the most appropriate operation in an expression, without brackets
+        /// </summary>
         private static string FindOperation(string input)
         {
             var pattern = @"([-+\/*])|([^-+\/*]*)";
@@ -140,9 +153,12 @@ namespace Calculator
             throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Calculates 2 numbers and returns the result
+        /// </summary>
         private static double CalculateTwoNumbers(string input)
         {
-            var pattern = @"([-+\/*])|([^-+\/*]*)";
+            var pattern = @"([-+\/*])|([^-+\/*]*)"; 
             Regex regex = new(pattern);
 
             List<string> elements = RemoveEmptyStrings(regex.Split(input));
@@ -192,6 +208,9 @@ namespace Calculator
             }
         }
 
+        /// <summary>
+        /// Evaluates an expression without brackets and returns the result
+        /// </summary>
         private static string CalculateExpression(string input)
         {
             string pattern = @"([-+\/*])|([^-+\/*]*)";
@@ -208,6 +227,9 @@ namespace Calculator
             return CalculateExpression(input);
         }
 
+        /// <summary>
+        /// Evaluates an expression with brackets and returns result 
+        /// </summary>
         public static string Calculate(string input)
         {
             try
@@ -250,15 +272,15 @@ namespace Calculator
             }
             catch (ArgumentException)
             {
-                return "Incorrect input format";
+                return "Exception. Incorrect input format.";
             }
             catch (DivideByZeroException)
             {
-                return "Not divisible by 0";
+                return "Exception. Not divisible by 0.";
             }
             catch (ArithmeticException)
             {
-                return "Not all brackets are closed";
+                return "Exception. Not all brackets are closed.";
             }
             catch (Exception ex)
             {
