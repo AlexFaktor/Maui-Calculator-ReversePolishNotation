@@ -171,7 +171,7 @@ namespace Calculator
         /// </summary>
         private static string CalculateTwoNumbers(string input)
         {
-            var pattern = @"([-+\/*])|([^-+\/*]*)"; 
+            var pattern = @"([-+\/*])|([^-+\/*]*)";
             Regex regex = new(pattern);
 
             List<string> elements = RemoveEmptyStrings(regex.Split(input));
@@ -223,6 +223,8 @@ namespace Calculator
                     return result.ToString();
                 case "*":
                     result.Append((elmFirst * elmSecond).ToString());
+                    if (double.Parse(result.ToString()) > 0)
+                        return result.Insert(0, "+").ToString();
                     return result.ToString();
                 default:
                     throw new Exception();
