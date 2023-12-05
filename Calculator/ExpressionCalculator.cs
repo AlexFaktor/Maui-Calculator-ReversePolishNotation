@@ -50,9 +50,22 @@ namespace Calculator
 
                 if (c == ')')
                     unclosedBrackets--;
+                if (unclosedBrackets < 0)
+                    throw new ArithmeticException();
             }
             countBrackets = count;
             return unclosedBrackets == 0;
+        }
+
+        private static string ExpressionArithmeticClear(string input)
+        {
+            input = input.Replace("*+", "*");
+            input = input.Replace("/+", "/");
+            input = input.Replace("--", "+");
+            input = input.Replace("++", "+");
+            input = input.Replace("-+", "-");
+
+            return input;
         }
 
         /// <summary>
@@ -156,7 +169,7 @@ namespace Calculator
         /// <summary>
         /// Calculates 2 numbers and returns the result
         /// </summary>
-        private static double CalculateTwoNumbers(string input)
+        private static string CalculateTwoNumbers(string input)
         {
             var pattern = @"([-+\/*])|([^-+\/*]*)"; 
             Regex regex = new(pattern);
@@ -164,14 +177,14 @@ namespace Calculator
             List<string> elements = RemoveEmptyStrings(regex.Split(input));
 
             // need to simplify the code
-            if (elements.Count == 4 && elements[0] == "-")
+            if (elements.Count == 4 && (elements[0] == "-" || elements[0] == "+"))
             {
                 elements[0] += elements[1];
                 elements[1] = elements[2];
                 elements[2] = elements[3];
             }
 
-            if (elements.Count == 4 && elements[2] == "-")
+            if (elements.Count == 4 && (elements[2] == "-" || elements[2] == "+"))
             {
                 elements[2] += elements[3];
             }
@@ -191,18 +204,26 @@ namespace Calculator
                 !double.TryParse(elements[2], NumberStyles.Any, CultureInfo.InvariantCulture, out elmSecond))
                 throw new ArgumentException("Second number cant parse");
 
+            StringBuilder result = new();
+
             switch (elements[1])
             {
                 case "-":
-                    return elmFirst - elmSecond;
+                    result.Append((elmFirst - elmSecond).ToString());
+                    return result.ToString();
                 case "+":
-                    return elmFirst + elmSecond;
+                    result.Append((elmFirst + elmSecond).ToString());
+                    return result.ToString();
                 case "/":
                     if (elmFirst == 0 || elmSecond == 0)
                         throw new DivideByZeroException();
-                    return elmFirst / elmSecond;
+                    result.Append((elmFirst / elmSecond).ToString());
+                    if (double.Parse(result.ToString()) > 0)
+                        return result.Insert(0, "+").ToString();
+                    return result.ToString();
                 case "*":
-                    return elmFirst * elmSecond;
+                    result.Append((elmFirst * elmSecond).ToString());
+                    return result.ToString();
                 default:
                     throw new Exception();
             }
@@ -220,9 +241,11 @@ namespace Calculator
             if (elements.Count <= 2)
                 return input;
 
+            input = ExpressionArithmeticClear(input);
+
             string needToChange = FindOperation(input);
-            double res = CalculateTwoNumbers(needToChange);
-            input = input.Replace(needToChange, res.ToString());
+            string res = CalculateTwoNumbers(needToChange);
+            input = input.Replace(needToChange, res);
 
             return CalculateExpression(input);
         }
@@ -235,7 +258,6 @@ namespace Calculator
             try
             {
                 input = String.Join("", input.Split(' '));
-
                 if (IsAnInvalidCharacter(input))
                     throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ),'.',','\"");
                 if (!IsAllBracketsClosedOutCountBrackets(input, out int numberBrackets))
