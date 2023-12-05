@@ -57,6 +57,9 @@ namespace Calculator
             return unclosedBrackets == 0;
         }
 
+        /// <summary>
+        /// Reduces math operations
+        /// </summary>
         private static string ExpressionArithmeticClear(string input)
         {
             input = input.Replace("*+", "*");
