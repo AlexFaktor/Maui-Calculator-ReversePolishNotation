@@ -6,7 +6,7 @@
         {
             if (args.Length == 2)
             {
-                var text = ExpressionCalculatorTools.CalculateList(File.ReadAllLines(args[0]).ToArray());
+                var text = PolishNotationCalculatorTools.CalculateList(File.ReadAllLines(args[0]).ToArray());
                 StreamWriter writer = File.CreateText(args[1]);
                 writer.WriteLine(text);
                 writer.Close();
@@ -16,7 +16,7 @@
 
             Console.Write("Enter the expression -> ");
             var input = Console.ReadLine();
-            Console.WriteLine($"{input} -> {ExpressionCalculator.Calculate(input!)}");
+            Console.WriteLine($"{input} -> {PolishNotationCalculator.Calculate(input!)}");
 
             return 0;
         }
