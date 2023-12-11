@@ -6,11 +6,16 @@
         {
             if (args.Length == 2)
             {
-                var text = PolishNotationCalculatorTools.CalculateList(File.ReadAllLines(args[0]).ToArray());
-                StreamWriter writer = File.CreateText(args[1]);
-                writer.WriteLine(text);
-                writer.Close();
+                using StreamReader reader = File.OpenText(args[0]);
+                using StreamWriter writer = File.CreateText(args[1]);
 
+                string line;
+                while ((line = reader.ReadLine()!) != null)
+                {
+                    var result = $"{line} -> {PolishNotationCalculatorTools.CalculateString(line)}";
+
+                    writer.WriteLine(result);
+                }
                 return 0;
             }
 
