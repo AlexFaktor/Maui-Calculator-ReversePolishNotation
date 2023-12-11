@@ -40,9 +40,9 @@ namespace Calculator
             {
                 return "Exception. Not all brackets are closed.";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return ex.ToString();
+                return "Exception. Unexpected exception.";
             }
 
         }

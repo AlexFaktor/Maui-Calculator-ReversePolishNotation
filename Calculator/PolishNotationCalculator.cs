@@ -7,24 +7,6 @@ namespace Calculator
     public class PolishNotationCalculator
     {
         /// <summary>
-        /// Get a regular expression without ""
-        /// </summary>
-        private static string[] RegaxClearStings(string expression, string pattern)
-        {
-            Regex regex = new(pattern);
-            string[] elements = regex.Split(expression);
-            List<string> cleanStrings = new();
-
-            for (int i = 0; i < elements.Length; i++)
-            {
-                if (!elements[i].Equals(""))
-                    cleanStrings.Add(elements[i]);
-            }
-
-            return cleanStrings.ToArray();
-        }
-
-        /// <summary>
         /// Checks for available characters
         /// </summary>
         private static bool IsAnInvalidCharacter(string line)
@@ -37,32 +19,26 @@ namespace Calculator
         /// <summary>
         /// Returns a bool value, depending on whether the brackets are in the correct order, and also returns their number in out
         /// </summary>
-        private static bool IsAllBracketsClosedOutCountBrackets(string line, out int countBrackets)
+        private static bool IsAllBracketsClosedOutCountBrackets(string line)
         {
             var unclosedBrackets = 0;
-            int count = 0;
 
             foreach (char c in line)
             {
                 if (c == '(')
-                {
                     unclosedBrackets++;
-                    count++;
-                }
-
                 if (c == ')')
                     unclosedBrackets--;
                 if (unclosedBrackets < 0)
                     throw new ArithmeticException();
             }
-            countBrackets = count;
             return unclosedBrackets == 0;
         }
 
         /// <summary>
         /// Needed to calculate where the unary minus is
         /// </summary>
-        private static bool IsСlosedBracketOrDefault(char c)
+        private static bool IsOpenBracketOrDefault(char c)
         {
             if (c == '(' || c == default)
                 return true;
@@ -72,7 +48,7 @@ namespace Calculator
         /// <summary>
         /// Check whether it is an operator or a parenthesis
         /// </summary>
-        private static bool IsOperatorOrDefault(string c)
+        private static bool IsOperator(string c)
         {
             if (c == "^"
                 || c == "~"
@@ -81,8 +57,7 @@ namespace Calculator
                 || c == "+"
                 || c == "-"
                 || c == "("
-                || c == ")"
-                || c == default)
+                || c == ")")
                 return true;
             return false;
         }
@@ -92,21 +67,16 @@ namespace Calculator
         /// </summary>
         private static int GetOperatorPriority(string chr)
         {
-            switch (chr)
+            return chr switch
             {
-                case "^":
-                    return 3;
-                case "~":
-                    return 2;
-                case "*":
-                case "/":
-                    return 1;
-                case "+":
-                case "-":
-                    return 0;
-                default:
-                    return int.MinValue;
-            }
+                "^" => 3,
+                "~" => 2,
+                "*" => 1,
+                "/" => 1,
+                "+" => 0,
+                "-" => 0,
+                _ => int.MinValue,
+            };
         }
 
         /// <summary>
@@ -118,7 +88,7 @@ namespace Calculator
 
             for (int i = 0; i < input.Length; i++)
             {
-                if (input[i] == '-' && IsСlosedBracketOrDefault(input.ElementAtOrDefault(i - 1)))
+                if (input[i] == '-' && IsOpenBracketOrDefault(input.ElementAtOrDefault(i - 1)))
                     output.Append('~');
                 else
                     output.Append(input[i]);
@@ -126,6 +96,7 @@ namespace Calculator
 
             return output.ToString();
         }
+
 
 
         /// <summary>
@@ -139,7 +110,7 @@ namespace Calculator
             for (int i = 0; i < expression.Length; i++)
             {
                 // if it is not the operator (numbers)
-                if (!IsOperatorOrDefault(expression[i]))
+                if (!IsOperator(expression[i]))
                     notatiom.Push(expression[i]);
                 // in the else operators come in
                 else
@@ -152,7 +123,7 @@ namespace Calculator
                     {
                         while (operators.Count > 0)
                         {
-                            if (operators.TryPeek(out string res) && res == "(")
+                            if (operators.TryPeek(out string? res) && res == "(")
                             {
                                 operators.Pop();
                                 break;
@@ -161,11 +132,12 @@ namespace Calculator
                         }
                     }
                     // if these are operators, not brackets
-                    else if (IsOperatorOrDefault(expression[i]))
+                    else if (IsOperator(expression[i]))
                     {
-                        bool isPeek = operators.TryPeek(out string op);
+                        bool isPeek = operators.TryPeek(out string? op);
+
                         // if the operator stack is empty or the last operator has a lower priority
-                        if (isPeek == false | GetOperatorPriority(op) < GetOperatorPriority(expression[i]))
+                        if (isPeek == false | GetOperatorPriority(op!) < GetOperatorPriority(expression[i]))
                         {
                             operators.Push(expression[i]);
                         }
@@ -175,9 +147,10 @@ namespace Calculator
                             do
                             {
                                 notatiom.Push(operators.Pop());
+
                                 operators.TryPeek(out op);
                             }
-                            while (GetOperatorPriority(op) >= GetOperatorPriority(expression[i]) && operators.Count > 0);
+                            while (GetOperatorPriority(op!) >= GetOperatorPriority(expression[i]) && operators.Count > 0);
                             operators.Push(expression[i]);
                         }
                     }
@@ -192,7 +165,7 @@ namespace Calculator
 
             // flip the stack
             int countNotation = notatiom.Count;
-            Stack<string> stack = new Stack<string>();
+            Stack<string> stack = new();
             for (int i = 0; i < countNotation; i++)
             {
                 if (notatiom.Peek() != "(")
@@ -214,11 +187,12 @@ namespace Calculator
 
             for (int i = 0; i < lenNotation; i++)
             {
-                if (!IsOperatorOrDefault(notation.Peek()))
+                if (!IsOperator(notation.Peek()))
                 {
                     string tryParse = notation.Pop();
-                    if (double.TryParse(tryParse, out double result) ||
+                    if (double.TryParse(tryParse, NumberStyles.Any, CultureInfo.CurrentCulture, out double result) ||
                         double.TryParse(tryParse, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
+
                         nums.Push(result);
                     else
                         throw new FormatException("Invalid number format");
@@ -276,17 +250,21 @@ namespace Calculator
         /// </summary>
         public static double Calculate(string expression)
         {
+            if (IsAnInvalidCharacter(expression))
+                throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ),'.',','\"");
+            if (!IsAllBracketsClosedOutCountBrackets(expression))
+                throw new ArithmeticException("Not all brackets are closed");
+
             // Remove spaces
             expression = String.Join("", expression.Split(' '));
 
-            if (IsAnInvalidCharacter(expression))
-                throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ),'.',','\"");
-            if (!IsAllBracketsClosedOutCountBrackets(expression, out int numberBrackets))
-                throw new ArithmeticException("Not all brackets are closed");
-
             // Unary minuses are converted to ~
             expression = GetExpressionWithUnaryMinuses(expression);
-            string[] elements = RegaxClearStings(expression, @"([- + \/ * \^ \( \ \~)])|([^- + \/ * \^ \( \) \~]*)");
+
+            string pattern = @"([- + \/ * \^ \( \ \~)])|([^- + \/ * \^ \( \) \~]*)";
+            Regex regex = new(pattern);
+
+            string[] elements = regex.Split(expression).Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
             Stack<string> staclPol = MakePolishNotation(elements);
 

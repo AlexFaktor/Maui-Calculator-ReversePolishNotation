@@ -15,10 +15,10 @@
         }
 
         [TestMethod]
-        public void Calculate_WithValidInput_ShouldReturnExpectedValue()
+        public void Calculate_InputWithSpace_ShouldReturnStringArgumentException()
         {
             var input = "( -3) * ( 200*1.5 + 400-(50+230) - (30) * (445/50*30))";
-            var expected = "22770";
+            var expected = "Exception. Incorrect input format.";
 
             var actual = PolishNotationCalculatorTools.CalculateString(input);
 
@@ -74,6 +74,17 @@
         {
             var input = "10+(3-3))";
             var expected = "Exception. Not all brackets are closed.";
+
+            var actual = PolishNotationCalculatorTools.CalculateString(input);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Calculate_InputWithWrongSequenceOfOperators_ShouldReturnStringUnexpectedException()
+        {
+            var input = "3++3";
+            var expected = "Exception. Unexpected exception.";
 
             var actual = PolishNotationCalculatorTools.CalculateString(input);
 
