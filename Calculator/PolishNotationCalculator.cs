@@ -11,9 +11,8 @@ namespace Calculator
         /// </summary>
         private static bool IsAnInvalidCharacter(string line)
         {
-            var pattern = @"[^0-9-+*\/(),.\^]";
-            Regex regex = new(pattern);
-            return regex.Matches(line).Any();
+            var regex = new Regex(@"[^0-9-+*\/(),.\^]");
+            return regex.IsMatch(line);
         }
 
         /// <summary>
@@ -33,16 +32,6 @@ namespace Calculator
                     throw new ArithmeticException();
             }
             return unclosedBrackets == 0;
-        }
-
-        /// <summary>
-        /// Needed to calculate where the unary minus is
-        /// </summary>
-        private static bool IsOpenBracketOrDefault(char c)
-        {
-            if (c == '(' || c == default)
-                return true;
-            return false;
         }
 
         /// <summary>
@@ -88,7 +77,7 @@ namespace Calculator
 
             for (int i = 0; i < input.Length; i++)
             {
-                if (input[i] == '-' && IsOpenBracketOrDefault(input.ElementAtOrDefault(i - 1)))
+                if (input[i] == '-' && (input.ElementAtOrDefault(i - 1) == '(' || input.ElementAtOrDefault(i - 1) == default) )
                     output.Append('~');
                 else
                     output.Append(input[i]);
@@ -157,23 +146,21 @@ namespace Calculator
                 }
             }
             // drop the remaining operators into the note
-            int countOperators = operators.Count;
-            for (int i = 0; i < countOperators; i++)
+            while(operators.Count != 0)
             {
                 notatiom.Push(operators.Pop());
             }
 
             // flip the stack
-            int countNotation = notatiom.Count;
             Stack<string> stack = new();
-            for (int i = 0; i < countNotation; i++)
+            while (notatiom.Count != 0)
             {
                 if (notatiom.Peek() != "(")
                     stack.Push(notatiom.Pop());
                 else
                     notatiom.Pop();
             }
-
+            
             return stack;
         }
 
@@ -250,19 +237,18 @@ namespace Calculator
         /// </summary>
         public static double Calculate(string expression)
         {
+            // Remove spaces
+            expression = expression.Replace(" ", "");
+
             if (IsAnInvalidCharacter(expression))
                 throw new ArgumentException("Can contain only \"0-9, -, +, *, /, (, ),'.',','\"");
             if (!IsAllBracketsClosedOutCountBrackets(expression))
-                throw new ArithmeticException("Not all brackets are closed");
-
-            // Remove spaces
-            expression = String.Join("", expression.Split(' '));
+                throw new ArithmeticException("Not all brackets are closed");         
 
             // Unary minuses are converted to ~
             expression = GetExpressionWithUnaryMinuses(expression);
 
-            string pattern = @"([- + \/ * \^ \( \ \~)])|([^- + \/ * \^ \( \) \~]*)";
-            Regex regex = new(pattern);
+            var regex = new Regex(@"([- + \/ * \^ \( \ \~)])|([^- + \/ * \^ \( \) \~]*)");
 
             string[] elements = regex.Split(expression).Where(x => !string.IsNullOrEmpty(x)).ToArray();
 

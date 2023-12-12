@@ -41,14 +41,14 @@ namespace Calculator.Tests
             pathToExe = Path.Combine(Directory.GetCurrentDirectory(), "Calculator.exe");
             tempFilePathTo = Path.Combine(Path.GetTempPath(), "tempFileTo.txt");
             tempFilePathFrom = Path.Combine(Path.GetTempPath(), "tempFileFrom.txt");
-            File.WriteAllText(tempFilePathFrom, "(-3)*(200*1.5+400-(50+230)-(30)*(445/50*30))\n1+2*(3+2)\n2+15/3+4*2\n1+x+4\n4/0\n10+(3-3))");
+            File.WriteAllText(tempFilePathFrom, "-(25-1*(120*2-26*7*12/(14+24-845-445/45)*5/(4-9)+2)-457)+2/2-(3^2)^2\r\n( -3) * ( 200*1.5 + 400-(50+230) - (30) * (445/50*30))\r\n1+2*(3+2)\r\n2+15/3+4*2\r\n1+x+4\r\n4/0\r\n10+(3-3))\r\n34++33\r\n3//5\r\n5 */ 4");
 
         }
 
         [TestMethod]
         public void Main_WithValidInputWithArguments_ShouldReturnExpectedValue() 
         {
-            string expectedOutput = "(-3)*(200*1.5+400-(50+230)-(30)*(445/50*30)) -> 22770\r\n1+2*(3+2) -> 11\r\n2+15/3+4*2 -> 15\r\n1+x+4 -> Exception. Incorrect input format.\r\n4/0 -> Exception. Not divisible by 0.\r\n10+(3-3)) -> Exception. Not all brackets are closed.\r\n";
+            string expectedOutput = "-(25-1*(120*2-26*7*12/(14+24-845-445/45)*5/(4-9)+2)-457)+2/2-(3^2)^2 -> 591,3264417845485\r\n( -3) * ( 200*1.5 + 400-(50+230) - (30) * (445/50*30)) -> 22770\r\n1+2*(3+2) -> 11\r\n2+15/3+4*2 -> 15\r\n1+x+4 -> ArgumentException. Incorrect input format.\r\n4/0 -> DivideByZeroException. Not divisible by 0.\r\n10+(3-3)) -> ArithmeticException. Not all brackets are closed.\r\n34++33 -> InvalidOperationException. The operation in the expression is invalid\r\n3//5 -> InvalidOperationException. The operation in the expression is invalid\r\n5 */ 4 -> InvalidOperationException. The operation in the expression is invalid\r\n";
             RunConsoleApp($"{pathToExe}", args: $"{tempFilePathFrom} {tempFilePathTo}", consoleInput: null);
 
             string actualOutput = File.ReadAllText($"{tempFilePathTo}");
