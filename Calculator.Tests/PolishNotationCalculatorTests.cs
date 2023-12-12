@@ -74,20 +74,14 @@ namespace Calculator.Tests
         }
 
         [TestMethod]
-        public void Calculate_InputWithWrongSequenceOfOperators_ShouldReturnStringUnexpectedException()
+        [DataRow("3++3")]
+        [DataRow("3//3")]
+        [DataRow("3**3")]
+        [DataRow("3+/3")]
+        [DataRow("3/*3")]
+        public void Calculate_InputWithWrongSequenceOfOperators_ShouldReturnStringUnexpectedException(string input)
         {
-            
-            var input0 = "3++3";
-            var input1 = "3//3";
-            var input2 = "3**3";
-            var input3 = "3+/3";
-            var input4 = "3/*3";
-
-            Assert.ThrowsException<InvalidOperationException>(() => PolishNotationCalculator.Calculate(input0));
-            Assert.ThrowsException<InvalidOperationException>(() => PolishNotationCalculator.Calculate(input1));
-            Assert.ThrowsException<InvalidOperationException>(() => PolishNotationCalculator.Calculate(input2));
-            Assert.ThrowsException<InvalidOperationException>(() => PolishNotationCalculator.Calculate(input3));
-            Assert.ThrowsException<InvalidOperationException>(() => PolishNotationCalculator.Calculate(input4));
+            Assert.ThrowsException<InvalidOperationException>(() => PolishNotationCalculator.Calculate(input));
         }
     }
 }
