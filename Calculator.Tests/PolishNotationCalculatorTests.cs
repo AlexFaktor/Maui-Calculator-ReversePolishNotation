@@ -1,4 +1,6 @@
-﻿namespace Calculator.Tests
+﻿using System.Data;
+
+namespace Calculator.Tests
 {
     [TestClass]
     public class PolishNotationCalculatorTests
@@ -74,6 +76,7 @@
         [TestMethod]
         public void Calculate_InputWithWrongSequenceOfOperators_ShouldReturnStringUnexpectedException()
         {
+            
             var input0 = "3++3";
             var input1 = "3//3";
             var input2 = "3**3";

@@ -11,9 +11,9 @@ namespace Calculator
         /// </summary>
         private static bool IsAnInvalidCharacter(string line)
         {
-            var regex = new Regex(@"[^0-9-+*\/(),.\^]");
+            var regex = new Regex(@"[^0-9-+*\/(),.\^]", RegexOptions.Compiled);
             return regex.IsMatch(line);
-        }
+        } 
 
         /// <summary>
         /// Returns a bool value, depending on whether the brackets are in the correct order, and also returns their number in out
