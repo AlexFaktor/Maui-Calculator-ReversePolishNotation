@@ -1,7 +1,5 @@
 ﻿namespace Calculator
 {
-    
-
     public class Program
     {
         public static string CalculateString(string expression)

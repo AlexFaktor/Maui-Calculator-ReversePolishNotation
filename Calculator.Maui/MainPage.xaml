@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Calculator.Maui.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Calculator.Maui">
+    <ContentPage.BindingContext>
+        <local:MainVM />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="36" />
+        </Style>
+    </ContentPage.Resources>
+
+
+    <Grid ColumnDefinitions="*,*,*,*,*" RowDefinitions="*,*,*,*,*" ColumnSpacing="8" RowSpacing="8">
+        <Entry FontSize="26" Margin="30" Grid.ColumnSpan="3" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" Placeholder="Enter the expression..."  Text="{Binding Expression}" />
+        <Label FontSize="26" Grid.Column="3" Text="{Binding Result}" HorizontalOptions="Center" VerticalOptions="Center" />
+
+        <Button Clicked="Button_Clicked_1" Grid.Row="1" Grid.Column="0" Text="1"></Button>
+        <Button Clicked="Button_Clicked_2" Grid.Row="1" Grid.Column="1" Text="2"></Button>
+        <Button Clicked="Button_Clicked_3" Grid.Row="1" Grid.Column="2" Text="3"></Button>
+        <Button Clicked="Button_Clicked_4" Grid.Row="2" Grid.Column="0" Text="4"></Button>
+        <Button Clicked="Button_Clicked_5" Grid.Row="2" Grid.Column="1" Text="5"></Button>
+        <Button Clicked="Button_Clicked_6" Grid.Row="2" Grid.Column="2" Text="6"></Button>
+        <Button Clicked="Button_Clicked_7" Grid.Row="3" Grid.Column="0" Text="7"></Button>
+        <Button Clicked="Button_Clicked_8" Grid.Row="3" Grid.Column="1" Text="8"></Button>
+        <Button Clicked="Button_Clicked_9" Grid.Row="3" Grid.Column="2" Text="9"></Button>
+        <Button Clicked="Button_Clicked_0" Grid.Row="4" Grid.Column="1" Text="0"></Button>
+
+        <Button Clicked="Button_Clicked_Plus" Grid.Row="1" Grid.Column="3" Text="+"></Button>
+        <Button Clicked="Button_Clicked_Minus" Grid.Row="1" Grid.Column="4" Text="-"></Button>
+        <Button Clicked="Button_Clicked_Multiplication" Grid.Row="2" Grid.Column="3" Text="*"></Button>
+        <Button Clicked="Button_Clicked_Division" Grid.Row="2" Grid.Column="4" Text="/"></Button>
+        <Button Clicked="Button_Clicked_Pow" Grid.Row="3" Grid.Column="3" Text="^"></Button>
+
+        <Button Clicked="Button_Clicked_OpeningBracket" Grid.Row="4" Grid.Column="3" Text="("></Button>
+        <Button Clicked="Button_Clicked_CloseBracket" Grid.Row="4" Grid.Column="4" Text=")"></Button>
+
+        <Button Clicked="Button_Clicked_Dot" Grid.Row="3" Grid.Column="4" Text="."></Button>
+        <Button Clicked="Button_Clicked_Clear" Grid.Row="4" Grid.Column="0" Text="C"></Button>
+        <Button Clicked="Button_Clicked_Result" Grid.Row="4" Grid.Column="2" Text="="></Button>
+
+        <Button Clicked="Button_Clicked_Backspace" Grid.Row="0" Grid.Column="4" Text="backspace"></Button>
+    </Grid>
+</ContentPage>

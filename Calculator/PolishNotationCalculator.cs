@@ -91,7 +91,7 @@ namespace Calculator
         /// <summary>
         /// Convert expression to Polish notation
         /// </summary>
-        private static Stack<string> MakePolishNotation(string[] expression)
+        public static Stack<string> MakePolishNotation(string[] expression)
         {
             Stack<string> notatiom = new();
             Stack<string> operators = new();
