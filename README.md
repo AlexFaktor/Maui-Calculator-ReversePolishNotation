@@ -35,6 +35,7 @@ Output file
   - From file to file
 - Support for degree, parenthesis, and basic mathematical operations
 - Error handling
+- Maui calculator
 
 # Contacts:
 - **Email**: [mykhailo.honchar5@gmail.com](mailto:mykhailo.honchar5@gmail.com)
